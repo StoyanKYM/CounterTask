@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Counter Task";
+}
+
+<h1>Counter Task</h1>
+
+<div>
+    <h2>Numbers</h2>
+    <ul id="numbers-list">
+        @if (ViewData["Numbers"] != null)
+        {
+            var numbers = ViewData["Numbers"] as List<int>;
+            if (numbers != null && numbers.Any())
+            {
+                foreach (var number in numbers)
+                {
+                    <li>@number</li>
+                }
+            }
+            else
+            {
+                <li>No numbers available.</li>
+            }
+        }
+        else
+        {
+            <li>No numbers available.</li>
+        }
+    </ul>
+</div>
+
+<div>
+    <h3>Sum: <span id="numbers-sum">@ViewData["Sum"]</span></h3>
+</div>
+
+<div>
+    <button id="clear-numbers" class="btn btn-danger">Clear Numbers</button>
+    <button id="add-number" class="btn btn-success">Add Number</button>
+    <button id="sum-numbers" class="btn btn-primary">Sum Numbers</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function refreshNumbers(data) {
+            $('#numbers-list').empty();
+            data.numbers.forEach(function (number) {
+                $('#numbers-list').append(`<li>${number}</li>`);
+            });
+
+            $('#numbers-sum').text(data.sum);
+        }
+
+        $('#clear-numbers').click(function () {
+            $.post('/Home/ClearNumbers', function (data) {
+                refreshNumbers(data);
+            });
+        });
+
+        $('#add-number').click(function () {
+            $.post('/Home/AddNumber', function (data) {
+                refreshNumbers(data);
+            });
+        });
+
+        $('#sum-numbers').click(function () {
+            $.get('/Home/SumNumbers', function (data) {
+                refreshNumbers(data);
+            });
+        });
+    });
+</script>
