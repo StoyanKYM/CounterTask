@@ -31,12 +31,12 @@
 
 <div>
     <h3>Sum: <span id="numbers-sum">@ViewData["Sum"]</span></h3>
+    <h3>Count: <span id="numbers-counter">@ViewData["Counter"]</span></h3>
 </div>
 
 <div>
     <button id="clear-numbers" class="btn btn-danger">Clear Numbers</button>
     <button id="add-number" class="btn btn-success">Add Number</button>
-    <button id="sum-numbers" class="btn btn-primary">Sum Numbers</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -49,6 +49,7 @@
             });
 
             $('#numbers-sum').text(data.sum);
+            $('#numbers-counter').text(data.counter);
         }
 
         $('#clear-numbers').click(function () {
@@ -59,12 +60,6 @@
 
         $('#add-number').click(function () {
             $.post('/Home/AddNumber', function (data) {
-                refreshNumbers(data);
-            });
-        });
-
-        $('#sum-numbers').click(function () {
-            $.get('/Home/SumNumbers', function (data) {
                 refreshNumbers(data);
             });
         });
