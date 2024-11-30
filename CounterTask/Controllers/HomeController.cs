@@ -15,12 +15,14 @@ namespace CounterTask.Controllers
         public IActionResult Index()
         {
             var numbers = HttpContext.Session.Get<List<int>>("Numbers") ?? new List<int>();
+            var counter = HttpContext.Session.GetInt32("Counter") ?? 0;
 
             var sum = numbers.Sum();
 
             // Store the numbers and sum in ViewData for rendering in the view
             ViewData["Numbers"] = numbers;
             ViewData["Sum"] = sum;
+            ViewData["Counter"] = counter;
 
             return View();
         }
@@ -34,7 +36,11 @@ namespace CounterTask.Controllers
             numbers.Add(random);
             HttpContext.Session.Set("Numbers", numbers);
 
-            return Json(new { numbers, sum = numbers.Sum() });
+            // Increment counter
+            var counter = HttpContext.Session.GetInt32("Counter") ?? 0;
+            HttpContext.Session.SetInt32("Counter", counter + 1);
+
+            return Json(new { numbers, sum = numbers.Sum(), counter = counter + 1 });
         }
 
         // Clear all numbers in the session
@@ -42,15 +48,9 @@ namespace CounterTask.Controllers
         public IActionResult ClearNumbers()
         {
             HttpContext.Session.Set("Numbers", new List<int>());
-            return Json(new { numbers = new List<int>(), sum = 0 });
-        }
+            HttpContext.Session.SetInt32("Counter", 0); // Reset counter
 
-        // Calculate the sum of the numbers in the session
-        [HttpGet]
-        public IActionResult SumNumbers()
-        {
-            var numbers = HttpContext.Session.Get<List<int>>("Numbers") ?? new List<int>();
-            return Json(new { numbers, sum = numbers.Sum() });
+            return Json(new { numbers = new List<int>(), sum = 0, counter = 0 });
         }
     }
 }
